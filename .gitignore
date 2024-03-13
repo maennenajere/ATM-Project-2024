@@ -1,0 +1,14 @@
+backend/node_modules/
+bank-automat/build/
+bank-automat/*.user
+
+build/*
+*.o
+*.exe
+/debug/
+*.pro.user
+*.user
+*.user.*
+*.qmake.stash
+*.pro.user.*
+.vscode/
