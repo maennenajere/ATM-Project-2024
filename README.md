@@ -1,6 +1,6 @@
 # SPO_Group10
 
-## Tekiät 
+## Tekijät 
 
 - Jere Mäennenä
 - Martti Prittinen
