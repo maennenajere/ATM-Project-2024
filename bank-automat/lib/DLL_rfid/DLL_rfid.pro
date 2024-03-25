@@ -1,4 +1,5 @@
 QT -= gui
+QT += serialport
 QT += serialport network
 
 TEMPLATE = lib
