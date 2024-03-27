@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "dll_rfid.h"
+#include "login.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -15,7 +17,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+signals:
+    void sendCardNumber(const QString cardNumber);
+
 private:
     Ui::MainWindow *ui;
+    Login * ploginWindow;
 };
 #endif // MAINWINDOW_H
