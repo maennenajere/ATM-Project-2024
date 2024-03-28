@@ -16,10 +16,10 @@
   <widget class="QWidget" name="verticalLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>160</y>
-     <width>160</width>
-     <height>206</height>
+     <x>220</x>
+     <y>140</y>
+     <width>241</width>
+     <height>231</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -76,6 +76,22 @@
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>-80</x>
+     <y>-140</y>
+     <width>821</width>
+     <height>991</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignBottom|Qt::AlignJustify</set>
+   </property>
   </widget>
  </widget>
  <resources/>

@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KorttiWindow</class>
+ <widget class="QDialog" name="KorttiWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>736</width>
+    <height>561</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>BankSimul</string>
+  </property>
+  <widget class="QLabel" name="labelidkortti">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>30</y>
+     <width>651</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QStackedWidget" name="stackedWidget">
+   <property name="geometry">
+    <rect>
+     <x>-10</x>
+     <y>0</y>
+     <width>741</width>
+     <height>561</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 231, 201);</string>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="stackMenu">
+    <widget class="QPushButton" name="btnNostaRahaa">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>290</y>
+       <width>201</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Bahnschrift</family>
+       <pointsize>22</pointsize>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 76, 45);
+font: 22pt &quot;Bahnschrift&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Nosta rahaa</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnSaldo">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>130</y>
+       <width>201</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Bahnschrift</family>
+       <pointsize>22</pointsize>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 76, 45);
+font: 22pt &quot;Bahnschrift&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Saldo</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnSiirraRahaa">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>290</y>
+       <width>201</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Bahnschrift</family>
+       <pointsize>22</pointsize>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 76, 45);
+font: 22pt &quot;Bahnschrift&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Siirrä rahaa</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnTilitapahtumat">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>130</y>
+       <width>201</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Bahnschrift</family>
+       <pointsize>22</pointsize>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 76, 45);
+font: 22pt &quot;Bahnschrift&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Tilitapahtumat</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_valikko">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>80</y>
+       <width>651</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="stackSaldo">
+    <widget class="QTextEdit" name="textSaldo">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>130</y>
+       <width>561</width>
+       <height>341</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_saldo">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>80</y>
+       <width>651</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="stackTapahtuma">
+    <widget class="QTextEdit" name="textTilitapahtumat">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>130</y>
+       <width>561</width>
+       <height>341</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_tilitapahtumat">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>80</y>
+       <width>651</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btn_uudemmat">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>370</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <italic>false</italic>
+       <bold>true</bold>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 76, 45);
+background-color: rgb(170, 170, 127);
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btn_vanhemmat">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>370</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <italic>false</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 76, 45);
+background-color: rgb(170, 170, 127);
+</string>
+     </property>
+     <property name="text">
+      <string>&gt;</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="stackNosto">
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>180</y>
+       <width>371</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Paljonko haluat nostaa?</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_tiliInfo">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>80</y>
+       <width>651</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineNostoMaara">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>300</y>
+       <width>121</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::WheelFocus</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn20e">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>220</y>
+       <width>81</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);</string>
+     </property>
+     <property name="text">
+      <string>20</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn40e">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>220</y>
+       <width>81</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);</string>
+     </property>
+     <property name="text">
+      <string>40</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn60e">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>220</y>
+       <width>81</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);</string>
+     </property>
+     <property name="text">
+      <string>60</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn100e">
+     <property name="geometry">
+      <rect>
+       <x>340</x>
+       <y>220</y>
+       <width>81</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);</string>
+     </property>
+     <property name="text">
+      <string>100</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn200e">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>220</y>
+       <width>81</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);</string>
+     </property>
+     <property name="text">
+      <string>200</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn500e">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>220</y>
+       <width>71</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);</string>
+     </property>
+     <property name="text">
+      <string>500</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnNosta">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>370</y>
+       <width>101</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 76, 45);</string>
+     </property>
+     <property name="text">
+      <string>Nosta</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnXe">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>220</y>
+       <width>71</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);</string>
+     </property>
+     <property name="text">
+      <string>X</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnTyhjenna">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>300</y>
+       <width>81</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(129, 129, 129);
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>Tyhjennä</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="stackSiirto">
+    <widget class="QLabel" name="label_SiirtoInfo">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>140</y>
+       <width>661</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Valitse tili jolle haluat siirtää rahaa</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboSiirtoTili">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>180</y>
+       <width>221</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(138, 211, 245);
+</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnSiirto">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>230</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(129, 129, 129);
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>Aloita Siirto</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_siirra">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>90</y>
+       <width>651</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="btnReturn">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>500</y>
+     <width>100</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Palaa valikkoon</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnLogout">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>500</y>
+     <width>100</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Kirjaudu ulos</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboTili">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>30</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelActiveTili">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>10</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Tili:</string>
+   </property>
+  </widget>
+  <zorder>stackedWidget</zorder>
+  <zorder>labelidkortti</zorder>
+  <zorder>btnReturn</zorder>
+  <zorder>btnLogout</zorder>
+  <zorder>comboTili</zorder>
+  <zorder>labelActiveTili</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
