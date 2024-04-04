@@ -11,10 +11,10 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::stri
 std::string makeReq(const char* url, std::string cookie, const std::string &data, bool isPost) {
     CURL *curl;
     CURLcode res;
-    std::string response = "empty";
+    std::string response;
 
     struct curl_slist *list = NULL;
-    list = curl_slist_append(list, std::format("Cookie: {}", cookie).c_str());
+    list = curl_slist_append(list, std::format("Cookie: {}", cookie).c_str()); // c++20 feature
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
