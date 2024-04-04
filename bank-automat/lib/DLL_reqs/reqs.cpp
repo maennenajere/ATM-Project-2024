@@ -11,7 +11,7 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::stri
 std::string makeReq(const char* url, std::string cookie, const std::string &data, bool isPost) {
     CURL *curl;
     CURLcode res;
-    std::string response;
+    std::string response = "empty";
 
     struct curl_slist *list = NULL;
     list = curl_slist_append(list, std::format("Cookie: {}", cookie).c_str());
