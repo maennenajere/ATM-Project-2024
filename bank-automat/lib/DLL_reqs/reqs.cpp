@@ -8,7 +8,7 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::stri
     return total_size;
 }
 
-std::string makeReq(const char* url,std::string cookie, const std::string &data, bool isPost) {
+std::string makeReq(const char* url, std::string cookie, const std::string &data, bool isPost) {
     CURL *curl;
     CURLcode res;
     std::string response;
@@ -38,7 +38,7 @@ std::string makeReq(const char* url,std::string cookie, const std::string &data,
         if (res != CURLE_OK)
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 
-        curl_slist_free_all(list); // Clean up the custom header list
+        curl_slist_free_all(list);
         curl_easy_cleanup(curl);
     }
 
