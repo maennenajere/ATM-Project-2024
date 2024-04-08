@@ -2,9 +2,18 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDebug>
+//#include <QtSql>
+#include <QMessageBox>
+#include <QSerialPort>
+#include <QSerialPortInfo>
+//#include <QNetworkAccessManager>
+#include "dll_rfid.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -14,8 +23,23 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void openSerialPort();
+
+public slots:
+    void onCardRead(const QByteArray &data);
 
 private:
     Ui::MainWindow *ui;
+    QSerialPort *serialPort;
+    DLL_rfid *dll_rfid;
+
+private slots:
+    void on_pushButtonQuit_clicked();
+    void on_pushButtonEnter_clicked();
+    void on_pushButtonWithdraw_clicked();
+    void on_pushButtonShowBalance_clicked();
+    void on_pushButtonShowTransactions_clicked();
+    void on_pushButtonLogOut_clicked();
 };
+
 #endif // MAINWINDOW_H
