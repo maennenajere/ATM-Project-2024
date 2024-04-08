@@ -103,7 +103,6 @@ void MainWindow::on_pushButtonWithdraw_clicked()
 {
     qDebug() << "Debug: Nosta rahaa-nappia painettu";
     ui->stackedWidget->setCurrentIndex(2);
-    ui->pushButton->setText("69€");
 }
 
 void MainWindow::on_pushButtonShowBalance_clicked()
@@ -124,8 +123,15 @@ void MainWindow::on_pushButtonShowTransactions_clicked()
 
 void MainWindow::on_pushButtonLogOut_clicked()
 {
+    ui->stackedWidget->setCurrentIndex(5);
     // TODO: joku uusi stackLogOut ja ajastus->siirtyy takaisin stackLogin
     // Kirjaa käyttäjän ulos
-    //ui->stackedWidget->setCurrentIndex(0);
     qDebug() << "Debug: Kirjaudu ulos-nappia painettu";
 }
+
+void MainWindow::on_pushButtonLogOutOK_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->lineEditPinCode->clear();
+}
+

@@ -40,6 +40,7 @@ private slots:
     void on_pushButtonShowBalance_clicked();
     void on_pushButtonShowTransactions_clicked();
     void on_pushButtonLogOut_clicked();
+    void on_pushButtonLogOutOK_clicked();
 };
 
 #endif // MAINWINDOW_H
