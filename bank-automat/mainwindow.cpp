@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dll_rfid.h"
+#include <curl.h>
 
 /*
  * ui->stackedWidget->setCurrentIndex(0); <- stackLogin
@@ -105,12 +106,52 @@ void MainWindow::on_pushButtonWithdraw_clicked()
     ui->stackedWidget->setCurrentIndex(2);
 }
 
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *data) {
+    size_t total_size = size * nmemb;
+    data->append((char*)contents, total_size);
+    return total_size;
+}
+
 void MainWindow::on_pushButtonShowBalance_clicked()
 {
     qDebug() << "Debug: Näytä saldo-nappia painettu";
     // TODO: Näyttää käyttäjän ostovoiman.
     // Avaa stackBalance
     ui->stackedWidget->setCurrentIndex(4);
+
+    CURLcode ret;
+    struct curl_slist *headers;
+    std::string response;
+    headers = NULL;
+    CURL *hnd;
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
+    hnd = curl_easy_init();
+
+    curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &response);
+
+    curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);
+    curl_easy_setopt(hnd, CURLOPT_URL, "http://127.0.0.1:3000/login");
+    curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);
+    curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, "{\"username\":\"4796977634126925\",\"password\":\"2212\"}");
+    curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)49);
+    curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(hnd, CURLOPT_USERAGENT, "curl/8.2.1");
+    curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
+    curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
+    curl_easy_setopt(hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
+    curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
+
+    ret = curl_easy_perform(hnd);
+
+    curl_easy_cleanup(hnd);
+    hnd = NULL;
+    curl_slist_free_all(headers);
+    headers = NULL;
+
+    //return (int)ret;
+    ui->labelBalance->setText(QString::fromStdString(response));
 }
 
 void MainWindow::on_pushButtonShowTransactions_clicked()
@@ -134,4 +175,3 @@ void MainWindow::on_pushButtonLogOutOK_clicked()
     ui->stackedWidget->setCurrentIndex(0);
     ui->lineEditPinCode->clear();
 }
-
