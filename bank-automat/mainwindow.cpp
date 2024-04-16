@@ -3,7 +3,6 @@
 #include "dll_rfid.h"
 #include <curl.h>
 
-
 /*
  * ui->stackedWidget->setCurrentIndex(0); <- stackLogin
  * ui->stackedWidget->setCurrentIndex(1); <- stackMenu
@@ -18,10 +17,33 @@
  */
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    serialPort(new QSerialPort("COM3")),
+    dll_rfid(new DLL_rfid(this, "COM3"))
 {
     ui->setupUi(this);
+    connect(dll_rfid, &DLL_rfid::cardRead, this, &MainWindow::onCardRead);
+
+    // Asetetaan alkuindeksi pin-koodin syöttämiseen
+    ui->stackedWidget->setCurrentIndex(0);
+
+    // Luodaan RFID-kirjaston ja sarjaportin olio
+    openSerialPort(); // Avaa sarjaportti
+
+    // PinCode->lineEditPinCode salasanana
+    ui->lineEditPinCode->setEchoMode(QLineEdit::Password);
+    // Yhdistää numPadin painallukset lineEditPinCode
+    for (int i = 0; i <= 9; ++i) {
+        QString buttonName = QString("N") + QString::number(i);
+        QObject::connect(findChild<QPushButton*>(buttonName), &QPushButton::clicked, [this, i]() {
+            ui->lineEditPinCode->setText(ui->lineEditPinCode->text() + QString::number(i));
+        });
+    }
+
+    connect(ui->pushButtonClear, &QPushButton::clicked, [this]() {
+        ui->lineEditPinCode->clear();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -129,7 +151,6 @@ void MainWindow::on_pushButtonShowBalance_clicked()
     headers = NULL;
 
     //return (int)ret;
-
     ui->labelBalance->setText(QString::fromStdString(response));
 }
 
@@ -154,4 +175,3 @@ void MainWindow::on_pushButtonLogOutOK_clicked()
     ui->stackedWidget->setCurrentIndex(0);
     ui->lineEditPinCode->clear();
 }
-

@@ -41,6 +41,33 @@ router.post('/login', async (req, res) => {
   res.send(cookie)
   res.end()
 })
+ 
+router.get('/balance/:cardNumber', async (req, res) => {
+  const cookie = req.headers.cookie;
+
+  if (!cookie) {
+    return res.send('Not logged in');
+  }
+
+  if (!auth.isUserLoggedin(cookie)) {
+    return res.send('Not logged in');
+  }
+
+  const cardNumber = req.params.cardNumber;
+
+  if (!cardNumber) {
+    return res.send('Card number is missing');
+  }
+
+  const balance = await tietokanta.getUserBalance(cardNumber);
+
+  if (balance === null) {
+    return res.send('User not found');
+  }
+
+  res.send(balance);
+});
+
 
 router.post('/register', async (req, res) => {
 
