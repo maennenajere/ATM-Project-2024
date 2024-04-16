@@ -80,6 +80,17 @@ export class Database {
     // Database operations
 
     /**
+     * Get user's account balance using their card number.
+     * @param {string} cardNumber - The user's card number.
+     * @returns {Promise<number>} Promise that contains the user account balance.
+     */
+    async getUserBalance(cardNumber: string): Promise<number> {
+        const safe = this.sanitizeQuery(cardNumber);
+        const result = await this.get(`SELECT a.accountBalance FROM automaatti.account a JOIN automaatti.card c ON a.idaccount = c.idaccount WHERE c.cardNumber = '${safe}';`);
+        return result[0][0]?.accountBalance;
+    }
+
+    /**
      * Check if a user exists based on their card number.
      * @param {string} cardNumber - The user's card number.
      * @returns {Promise<boolean>} A promise resolving to true if the user exists, false otherwise.
