@@ -3,12 +3,17 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <iostream>
 //#include <QtSql>
 #include <QMessageBox>
 #include <QSerialPort>
 #include <QSerialPortInfo>
 //#include <QNetworkAccessManager>
 #include "dll_rfid.h"
+#include "../DLL_reqs/reqs.hpp"
+#include <QTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,6 +37,7 @@ private:
     Ui::MainWindow *ui;
     QSerialPort *serialPort;
     DLL_rfid *dll_rfid;
+    QTimer *logoutTimer;
 
 private slots:
     void on_pushButtonQuit_clicked();
