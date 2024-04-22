@@ -90,6 +90,13 @@ export class Database {
         return result[0][0]?.accountBalance;
     }
 
+    async getUserTransactions(cardNumber: string): Promise<any> {
+        const safe = this.sanitizeQuery(cardNumber);
+        const result = await this.get(`SELECT t.idtransactions, t.transactionsDate, t.transactionsType, t.transactionsAmount FROM transactions t INNER JOIN card c ON t.idaccount = c.idaccount INNER JOIN account a ON t.idaccount = a.idaccount WHERE c.cardNumber ='${safe}';`);
+        return result[0][0];
+    }
+
+
     /**
      * Check if a user exists based on their card number.
      * @param {string} cardNumber - The user's card number.
