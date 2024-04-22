@@ -68,6 +68,31 @@ router.get('/balance/:cardNumber', async (req, res) => {
   res.send(balance);
 });
 
+router.get('/transactions/:cardNumber', async (req, res) => {
+  const cookie = req.headers.cookie;
+
+  if (!cookie) {
+    return res.send('Not logged in');
+  }
+
+  if (!auth.isUserLoggedin(cookie)) {
+    return res.send('Not logged in');
+  }
+
+  const cardNumber = req.params.cardNumber;
+
+  if (!cardNumber) {
+    return res.send('Card number is missing');
+  }
+
+  const balance = await tietokanta.getUserTransactions(cardNumber);
+
+  if (balance === null) {
+    return res.send('User not found');
+  }
+
+  res.send(balance);
+});
 
 router.post('/register', async (req, res) => {
 
@@ -138,19 +163,7 @@ router.get('/test', (req, res) => {
   res.send('You are logged in!')
 })
 
-router.get('/balance', async (req, res) =>  {
 
-  const cookie = req.headers.cookie
-
-  if (!cookie)
-    return res.send('Not logged in')
-  if (!auth.isUserLoggedin(cookie))
-    return res.send('Not logged in')
-
-  // implement logic for check
-
-  res.send('Balance is x')
-})
 
 // transfer money. from is used for testing, prod version could for example just get the data from db using cookie
 router.get('/transfer/:amount/:from/:to', (req, res) => {
