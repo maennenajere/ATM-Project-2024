@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dll_rfid.h"
-#include <curl.h>
+#include <curl/curl.h>
 
 /*
  * ui->stackedWidget->setCurrentIndex(0); <- stackLogin
@@ -42,6 +42,11 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     connect(ui->pushButtonClear, &QPushButton::clicked, [this]() {
+        ui->lineEditPinCode->clear();
+    });
+    logoutTimer=new QTimer(this);
+    connect(logoutTimer, &QTimer::timeout, this, [this]() {
+        ui->stackedWidget->setCurrentIndex(5);
         ui->lineEditPinCode->clear();
     });
 }
@@ -97,6 +102,7 @@ void MainWindow::on_pushButtonEnter_clicked()
         qDebug() << "Debug: Virheellinen PIN-koodi";
         ui->lineEditPinCode->clear();
     }
+    logoutTimer->start(300000);
 }
 
 // TODO: 20,40,50,100 ja x-summa nostot (mitä noston jälkeen?)
@@ -106,59 +112,65 @@ void MainWindow::on_pushButtonWithdraw_clicked()
     ui->stackedWidget->setCurrentIndex(2);
 }
 
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *data) {
-    size_t total_size = size * nmemb;
-    data->append((char*)contents, total_size);
-    return total_size;
-}
 
 void MainWindow::on_pushButtonShowBalance_clicked()
 {
     qDebug() << "Debug: Näytä saldo-nappia painettu";
-    // TODO: Näyttää käyttäjän ostovoiman.
-    // Avaa stackBalance
     ui->stackedWidget->setCurrentIndex(4);
 
-    CURLcode ret;
-    struct curl_slist *headers;
-    std::string response;
-    headers = NULL;
-    CURL *hnd;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
+        const char* url = "http://144.21.42.71:3000/login";
+        std::string res = makeReq(url, " ", "{\"username\":\"4796977634126925\",\"password\":\"2212\"}", true); // this is a post req
+        std::cout << "result " << res << "\n";
+        qDebug()<<"result"<<res;
 
-    hnd = curl_easy_init();
 
-    curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, WriteCallback);
-    curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &response);
+        const char* jjj = "http://144.21.42.71:3000/balance/06000DE344";
+        std::string cookie = res;
+        std::string sek = makeReq(jjj, cookie, "", false); // this is a get req
+        std::cout << "result " << sek << "\n";
+        qDebug()<<"result"<<sek;
 
-    curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);
-    curl_easy_setopt(hnd, CURLOPT_URL, "http://127.0.0.1:3000/login");
-    curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);
-    curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, "{\"username\":\"4796977634126925\",\"password\":\"2212\"}");
-    curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)49);
-    curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(hnd, CURLOPT_USERAGENT, "curl/8.2.1");
-    curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
-    curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
-    curl_easy_setopt(hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
-    curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
+        ui->labelBalance->setText(QString::fromStdString(sek)); // Display the balance
 
-    ret = curl_easy_perform(hnd);
-
-    curl_easy_cleanup(hnd);
-    hnd = NULL;
-    curl_slist_free_all(headers);
-    headers = NULL;
-
-    //return (int)ret;
-    ui->labelBalance->setText(QString::fromStdString(response));
 }
+
 
 void MainWindow::on_pushButtonShowTransactions_clicked()
 {
-    // TODO: Näyttää käyttäjän tilitapahtumat, (kaksi nuolta selaamiseen uudet ja vanhemmat?)
-    // Avaa stackTransactions
-    qDebug() << "Debug: Tilitapahtumat-nappia painettu";
+    // Open serial port if not already opened
+    openSerialPort();
+
+    // Make POST request to login and obtain session cookie
+    const char* url = "http://144.21.42.71:3000/login";
+    std::string res = makeReq(url, " ", "{\"username\":\"4796977634126925\",\"password\":\"2212\"}", true);
+    qDebug() << "Login Result: " << res.c_str();
+
+    // Make GET request to fetch transactions
+    const char* transactionsUrl = "http://144.21.42.71:3000/transactions/06000DE344";
+    std::string cookie = res;
+    std::string transactionData = makeReq(transactionsUrl, cookie, "", false);
+    qDebug() << "Transaction Data: " << transactionData.c_str();
+
+    // Parse JSON string
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(QString::fromStdString(transactionData).toUtf8());
+    if (!jsonDoc.isNull() && jsonDoc.isObject()) {
+        QJsonObject jsonObj = jsonDoc.object();
+        if (jsonObj.contains("transactionsType") && jsonObj.contains("transactionsAmount") && jsonObj.contains("transactionsDate")) {
+            QString type = jsonObj["transactionsType"].toString();
+            QString amount = jsonObj["transactionsAmount"].toString();
+            QString date = jsonObj["transactionsDate"].toString();
+
+            // Display transaction information
+            QString transactionInfo = "Type: " + type + "\nAmount: " + amount + "\nDate: " + date;
+            ui->labelTransactionInfo->setText(transactionInfo);
+        } else {
+            qDebug() << "Invalid transaction data format!";
+        }
+    } else {
+        qDebug() << "Failed to parse JSON data!";
+    }
+
+    // Switch to transactions view
     ui->stackedWidget->setCurrentIndex(3);
 }
 
