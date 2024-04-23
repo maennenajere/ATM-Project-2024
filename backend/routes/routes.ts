@@ -24,7 +24,7 @@ router.post('/login', async (req, res) => {
     return res.send('Missing params')
 
   const passwdhash = await tietokanta.getPasswordHash(username)
- 
+
   if (!passwdhash) 
     return res.send('Bad login')
 
@@ -123,6 +123,7 @@ router.post('/register', async (req, res) => {
 })
 
 
+
 router.post('/delete', async (req, res) => {
 
   const data = JSON.parse(await new Promise<string>(resolve => req.on('data', raw => resolve(raw.toString()))))
@@ -152,7 +153,7 @@ router.post('/delete', async (req, res) => {
 })
 
 router.get('/test', (req, res) => {
-
+  
   const cookie = req.headers.cookie
 
   if (!cookie)
@@ -164,9 +165,36 @@ router.get('/test', (req, res) => {
 })
 
 
+router.get('/withdraw/:amount/:type', async (req, res) => {
+
+  const cookie = req.headers.cookie
+
+  if (!cookie) {
+    return res.send('Not logged in!')
+  }
+
+  if (!auth.isUserLoggedin(cookie)) {
+    return res.send('Not logged in!')
+  }
+
+  const cardnumber = atob(cookie.split('.')[0])
+
+  console.log(cardnumber)
+
+  const value = Number(req.params.amount)
+
+  if (isNaN(value)) {
+    return res.send('Invalid value')
+  }
+
+  const result = await tietokanta.transferMoneyWithinBank(cardnumber, '785645', value, req.params.type == 'credit' ? true : false)
+  res.send(result ? 'success' : 'failed')
+})
+
+
 
 // transfer money. from is used for testing, prod version could for example just get the data from db using cookie
-router.get('/transfer/:amount/:from/:to', (req, res) => {
+router.get('/transfer/:amount/:from/:to/:type', async (req, res) => {
 
   const cookie = req.headers.cookie
 
@@ -180,18 +208,14 @@ router.get('/transfer/:amount/:from/:to', (req, res) => {
   if (isNaN(value))
     return res.send('Not a number')
 
-  if (value > 100 && value === 50 ? false : value % 20 !== 0)
-    return res.send('Only 20, 40, 50 or 100')
-
   const from = req.params.from
   const to = req.params.to
 
   if (!from || !to) // also implement check to see if those are valid
     return res.send('Invalid params')
 
-  // implement actual logic for transfer
-
-  res.send('Transfer done')
+    const result = await tietokanta.transferMoneyWithinBank(from, to, value, req.params.type == 'credit' ? true : false)
+    res.send(result ? 'success' : 'failed')
 })
 
 router.get('/logout', (req, res) => {
