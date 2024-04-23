@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dll_rfid.h"
-#include <curl/curl.h>
+#include <curl.h>
 
 /*
  * ui->stackedWidget->setCurrentIndex(0); <- stackLogin
@@ -85,6 +85,20 @@ void MainWindow::on_pushButtonQuit_clicked()
     this->close();
 }
 
+std::string globalResult; // Global variable to store the result
+
+// Function to make HTTP request and set the result to global variable
+void login() {
+    // Code to make HTTP request and store result in global variable
+    // For demonstration purposes, let's assume it's done here:
+
+    const char* url = "http://144.21.42.71:3000/login";
+    std::string res = makeReq(url, " ", "{\"username\":\"4796977634126925\",\"password\":\"2212\"}", true); // this is a post req
+    std::cout << "result " << res << "\n";
+    qDebug()<<"result"<<res;
+    globalResult = res;
+}
+
 // 06000641FF = 1111, 06000DE344 = 4444, 06000542DC = 2222
 void MainWindow::on_pushButtonEnter_clicked()
 {
@@ -94,16 +108,18 @@ void MainWindow::on_pushButtonEnter_clicked()
     int enteredPin = ui->lineEditPinCode->text().toInt();
     if (enteredPin == correctPin)
     {
+        login();
         ui->stackedWidget->setCurrentIndex(1);
     }
     else
     {
-        QMessageBox::warning(this, "Virheellinen PIN-koodi", "Santeri hakkeri rockyou.txt\n=1111");
+        QMessageBox::warning(this, "Virheellinen PIN-koodi", "FU JEre.txt\n=1111");
         qDebug() << "Debug: Virheellinen PIN-koodi";
         ui->lineEditPinCode->clear();
     }
     logoutTimer->start(300000);
 }
+
 
 // TODO: 20,40,50,100 ja x-summa nostot (mitä noston jälkeen?)
 void MainWindow::on_pushButtonWithdraw_clicked()
@@ -118,14 +134,9 @@ void MainWindow::on_pushButtonShowBalance_clicked()
     qDebug() << "Debug: Näytä saldo-nappia painettu";
     ui->stackedWidget->setCurrentIndex(4);
 
-        const char* url = "http://144.21.42.71:3000/login";
-        std::string res = makeReq(url, " ", "{\"username\":\"4796977634126925\",\"password\":\"2212\"}", true); // this is a post req
-        std::cout << "result " << res << "\n";
-        qDebug()<<"result"<<res;
-
 
         const char* jjj = "http://144.21.42.71:3000/balance/06000DE344";
-        std::string cookie = res;
+        std::string cookie = globalResult;
         std::string sek = makeReq(jjj, cookie, "", false); // this is a get req
         std::cout << "result " << sek << "\n";
         qDebug()<<"result"<<sek;
@@ -140,14 +151,10 @@ void MainWindow::on_pushButtonShowTransactions_clicked()
     // Open serial port if not already opened
     openSerialPort();
 
-    // Make POST request to login and obtain session cookie
-    const char* url = "http://144.21.42.71:3000/login";
-    std::string res = makeReq(url, " ", "{\"username\":\"4796977634126925\",\"password\":\"2212\"}", true);
-    qDebug() << "Login Result: " << res.c_str();
 
     // Make GET request to fetch transactions
     const char* transactionsUrl = "http://144.21.42.71:3000/transactions/06000DE344";
-    std::string cookie = res;
+    std::string cookie = globalResult;
     std::string transactionData = makeReq(transactionsUrl, cookie, "", false);
     qDebug() << "Transaction Data: " << transactionData.c_str();
 
@@ -180,6 +187,12 @@ void MainWindow::on_pushButtonLogOut_clicked()
     // TODO: joku uusi stackLogOut ja ajastus->siirtyy takaisin stackLogin
     // Kirjaa käyttäjän ulos
     qDebug() << "Debug: Kirjaudu ulos-nappia painettu";
+
+    const char* jjj = "http://144.21.42.71:3000/logout";
+    std::string cookie = globalResult;
+    std::string sek = makeReq(jjj, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
 }
 
 void MainWindow::on_pushButtonLogOutOK_clicked()
