@@ -66,7 +66,7 @@
      <string notr="true">background-color:rgb(195, 213, 232) ;</string>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="stackLogin">
      <property name="minimumSize">
@@ -85,7 +85,19 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="LayoutInsert">
-       <item row="0" column="1">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelCardInfo">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Kortti</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
         <widget class="QLineEdit" name="lineEditCardInfo">
          <property name="readOnly">
           <bool>true</bool>
@@ -104,7 +116,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="1" column="2">
         <widget class="QLineEdit" name="lineEditPinCode">
          <property name="autoFillBackground">
           <bool>false</bool>
@@ -132,15 +144,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelCardInfo">
-         <property name="font">
-          <font>
-           <pointsize>20</pointsize>
-          </font>
-         </property>
+       <item row="2" column="2">
+        <widget class="QCheckBox" name="isCredit">
          <property name="text">
-          <string>Kortti</string>
+          <string>credit</string>
          </property>
         </widget>
        </item>
@@ -5378,6 +5385,16 @@ tilitapahtumat</string>
        <string/>
       </property>
      </widget>
+     <widget class="QTextEdit" name="textEdit">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>100</y>
+        <width>291</width>
+        <height>171</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="stackBalance">
      <widget class="QLabel" name="labelBalanceTitle">
@@ -6275,7 +6292,7 @@ tilitapahtumat</string>
      <x>0</x>
      <y>0</y>
      <width>1130</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

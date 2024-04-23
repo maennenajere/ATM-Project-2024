@@ -4,11 +4,9 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <iostream>
-//#include <QtSql>
 #include <QMessageBox>
 #include <QSerialPort>
 #include <QSerialPortInfo>
-//#include <QNetworkAccessManager>
 #include "dll_rfid.h"
 #include "../DLL_reqs/reqs.hpp"
 #include <QTimer>
@@ -47,6 +45,14 @@ private slots:
     void on_pushButtonShowTransactions_clicked();
     void on_pushButtonLogOut_clicked();
     void on_pushButtonLogOutOK_clicked();
+    void on_pushButtonL1_clicked();
+    void on_pushButtonL2_clicked();
+    void on_pushButtonL3_clicked();
+    //void on_pushButtonL4_clicked();
+    void on_pushButtonR1_clicked();
+    void on_pushButtonR2_clicked();
+    void on_pushButtonR3_clicked();
+    void on_pushButtonR4_clicked();
 };
 
 #endif // MAINWINDOW_H

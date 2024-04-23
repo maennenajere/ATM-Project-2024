@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "qscrollbar.h"
 #include "ui_mainwindow.h"
 #include "dll_rfid.h"
 #include <curl.h>
@@ -86,19 +87,15 @@ void MainWindow::on_pushButtonQuit_clicked()
 }
 
 std::string globalResult; // Global variable to store the result
-
+boolean credit;
 // Function to make HTTP request and set the result to global variable
 void login() {
-    // Code to make HTTP request and store result in global variable
-    // For demonstration purposes, let's assume it's done here:
-
     const char* url = "http://144.21.42.71:3000/login";
-    std::string res = makeReq(url, " ", "{\"username\":\"4796977634126925\",\"password\":\"2212\"}", true); // this is a post req
+    std::string res = makeReq(url, " ", "{\"username\":\"06000641FF\",\"password\":\"0090\"}", true); // this is a post req
     std::cout << "result " << res << "\n";
     qDebug()<<"result"<<res;
     globalResult = res;
 }
-
 // 06000641FF = 1111, 06000DE344 = 4444, 06000542DC = 2222
 void MainWindow::on_pushButtonEnter_clicked()
 {
@@ -106,6 +103,7 @@ void MainWindow::on_pushButtonEnter_clicked()
     qDebug() << "Debug: Enter-nappia painettu";
     int correctPin = 1111;
     int enteredPin = ui->lineEditPinCode->text().toInt();
+    credit = ui->isCredit->checkState();
     if (enteredPin == correctPin)
     {
         login();
@@ -117,7 +115,7 @@ void MainWindow::on_pushButtonEnter_clicked()
         qDebug() << "Debug: Virheellinen PIN-koodi";
         ui->lineEditPinCode->clear();
     }
-    logoutTimer->start(300000);
+    logoutTimer->start(60000);
 }
 
 
@@ -135,7 +133,7 @@ void MainWindow::on_pushButtonShowBalance_clicked()
     ui->stackedWidget->setCurrentIndex(4);
 
 
-        const char* jjj = "http://144.21.42.71:3000/balance/06000DE344";
+        const char* jjj = "http://144.21.42.71:3000/balance/06000641FF";
         std::string cookie = globalResult;
         std::string sek = makeReq(jjj, cookie, "", false); // this is a get req
         std::cout << "result " << sek << "\n";
@@ -152,30 +150,19 @@ void MainWindow::on_pushButtonShowTransactions_clicked()
     openSerialPort();
 
 
+    QScrollBar *scrollbar = new QScrollBar();
+
+   // QTextEdit textedit;
+
+    ui->textEdit->setVerticalScrollBar(scrollbar);
+
     // Make GET request to fetch transactions
-    const char* transactionsUrl = "http://144.21.42.71:3000/transactions/06000DE344";
+    const char* transactionsUrl = "http://144.21.42.71:3000/transactions/06000641FF";
     std::string cookie = globalResult;
     std::string transactionData = makeReq(transactionsUrl, cookie, "", false);
-    qDebug() << "Transaction Data: " << transactionData.c_str();
-
-    // Parse JSON string
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(QString::fromStdString(transactionData).toUtf8());
-    if (!jsonDoc.isNull() && jsonDoc.isObject()) {
-        QJsonObject jsonObj = jsonDoc.object();
-        if (jsonObj.contains("transactionsType") && jsonObj.contains("transactionsAmount") && jsonObj.contains("transactionsDate")) {
-            QString type = jsonObj["transactionsType"].toString();
-            QString amount = jsonObj["transactionsAmount"].toString();
-            QString date = jsonObj["transactionsDate"].toString();
-
-            // Display transaction information
-            QString transactionInfo = "Type: " + type + "\nAmount: " + amount + "\nDate: " + date;
-            ui->labelTransactionInfo->setText(transactionInfo);
-        } else {
-            qDebug() << "Invalid transaction data format!";
-        }
-    } else {
-        qDebug() << "Failed to parse JSON data!";
-    }
+    QString data = transactionData.c_str();
+    qDebug() << "Transaction Data: " << data;
+    ui->textEdit->setText(data.replace(",", ",\n"));
 
     // Switch to transactions view
     ui->stackedWidget->setCurrentIndex(3);
@@ -200,3 +187,66 @@ void MainWindow::on_pushButtonLogOutOK_clicked()
     ui->stackedWidget->setCurrentIndex(0);
     ui->lineEditPinCode->clear();
 }
+
+std::string jjj = "http://144.21.42.71:3000/withdraw/";
+void MainWindow::on_pushButtonL1_clicked() {
+
+
+
+    const char *url = (jjj + "20" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonL2_clicked() {
+    const char *url = (jjj + "40" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonL3_clicked() {
+    const char *url = (jjj + "60" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR1_clicked() {
+    const char *url = (jjj + "90" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR2_clicked() {
+    const char *url = (jjj + "120" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR3_clicked() {
+    const char *url = (jjj + "240" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR4_clicked() {
+    // muu summa
+}
+
