@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "qscrollbar.h"
 #include "ui_mainwindow.h"
 #include "dll_rfid.h"
 #include <curl.h>
@@ -38,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
         QString buttonName = QString("N") + QString::number(i);
         QObject::connect(findChild<QPushButton*>(buttonName), &QPushButton::clicked, [this, i]() {
             ui->lineEditPinCode->setText(ui->lineEditPinCode->text() + QString::number(i));
+            ui->lineEditMuuSumma->setText(ui->lineEditMuuSumma->text() + QString::number(i));
         });
     }
 
@@ -86,39 +88,51 @@ void MainWindow::on_pushButtonQuit_clicked()
 }
 
 std::string globalResult; // Global variable to store the result
+boolean credit;
+int attempts = 0;
 
+std::string CardInfo;
 // Function to make HTTP request and set the result to global variable
-void login() {
-    // Code to make HTTP request and store result in global variable
-    // For demonstration purposes, let's assume it's done here:
-
+void MainWindow::login() {
+    QString Cardnum = ui->lineEditCardInfo->text();
+    std::string Cardnumm = Cardnum.toStdString();
+    CardInfo = Cardnumm;
+    QString Password = ui->lineEditPinCode->text();
+    std::string Passwordd = Password.toStdString();
     const char* url = "http://144.21.42.71:3000/login";
-    std::string res = makeReq(url, " ", "{\"username\":\"4796977634126925\",\"password\":\"2212\"}", true); // this is a post req
+    std::string muja = "{\"username\":\""+CardInfo+"\",\"password\":\""+Passwordd+"\"}";
+    std::string res = makeReq(url, " ",muja.c_str() , true); // this is a post req
     std::cout << "result " << res << "\n";
     qDebug()<<"result"<<res;
     globalResult = res;
 }
-
 // 06000641FF = 1111, 06000DE344 = 4444, 06000542DC = 2222
 void MainWindow::on_pushButtonEnter_clicked()
 {
     // Tarkistaa syötetyn PIN-koodin ja siirtyy seuraavaan näkymään, (stackMenu) jos oikein
     qDebug() << "Debug: Enter-nappia painettu";
-    int correctPin = 1111;
-    int enteredPin = ui->lineEditPinCode->text().toInt();
-    if (enteredPin == correctPin)
+    credit = ui->isCredit->checkState();
+    if (globalResult != "Bad login")
     {
         login();
         ui->stackedWidget->setCurrentIndex(1);
     }
     else
     {
-        QMessageBox::warning(this, "Virheellinen PIN-koodi", "FU JEre.txt\n=1111");
-        qDebug() << "Debug: Virheellinen PIN-koodi";
+        attempts++ ;
+        if (attempts == 3){
+            QMessageBox::warning(this, tr("Title"), tr("Virheellinen PIN-koodi, tili lukittu tai jtn."));
+        }
+        else{
+            QMessageBox::warning(static_cast<QWidget*>(this), tr("Title"), tr("Pin-koodi väärin, yritä uudelleen."));
+            qDebug() << "Debug: Virheellinen PIN-koodi";
+        }
+
         ui->lineEditPinCode->clear();
     }
-    logoutTimer->start(300000);
+    logoutTimer->start(60000);
 }
+
 
 
 // TODO: 20,40,50,100 ja x-summa nostot (mitä noston jälkeen?)
@@ -135,13 +149,14 @@ void MainWindow::on_pushButtonShowBalance_clicked()
     ui->stackedWidget->setCurrentIndex(4);
 
 
-        const char* jjj = "http://144.21.42.71:3000/balance/06000DE344";
-        std::string cookie = globalResult;
-        std::string sek = makeReq(jjj, cookie, "", false); // this is a get req
-        std::cout << "result " << sek << "\n";
-        qDebug()<<"result"<<sek;
+    std::string kkk = "http://144.21.42.71:3000/balance/"+CardInfo;
+    const char* jjj = kkk.c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(jjj, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
 
-        ui->labelBalance->setText(QString::fromStdString(sek)); // Display the balance
+    ui->labelBalance->setText(QString::fromStdString(sek)); // Display the balance
 
 }
 
@@ -152,30 +167,19 @@ void MainWindow::on_pushButtonShowTransactions_clicked()
     openSerialPort();
 
 
+    QScrollBar *scrollbar = new QScrollBar();
+
+    // QTextEdit textedit;
+
+    ui->textEdit->setVerticalScrollBar(scrollbar);
+    std::string kkk = "http://144.21.42.71:3000/transactions/"+CardInfo;
     // Make GET request to fetch transactions
-    const char* transactionsUrl = "http://144.21.42.71:3000/transactions/06000DE344";
+    const char* transactionsUrl = kkk.c_str();
     std::string cookie = globalResult;
     std::string transactionData = makeReq(transactionsUrl, cookie, "", false);
-    qDebug() << "Transaction Data: " << transactionData.c_str();
-
-    // Parse JSON string
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(QString::fromStdString(transactionData).toUtf8());
-    if (!jsonDoc.isNull() && jsonDoc.isObject()) {
-        QJsonObject jsonObj = jsonDoc.object();
-        if (jsonObj.contains("transactionsType") && jsonObj.contains("transactionsAmount") && jsonObj.contains("transactionsDate")) {
-            QString type = jsonObj["transactionsType"].toString();
-            QString amount = jsonObj["transactionsAmount"].toString();
-            QString date = jsonObj["transactionsDate"].toString();
-
-            // Display transaction information
-            QString transactionInfo = "Type: " + type + "\nAmount: " + amount + "\nDate: " + date;
-            ui->labelTransactionInfo->setText(transactionInfo);
-        } else {
-            qDebug() << "Invalid transaction data format!";
-        }
-    } else {
-        qDebug() << "Failed to parse JSON data!";
-    }
+    QString data = transactionData.c_str();
+    qDebug() << "Transaction Data: " << data;
+    ui->textEdit->setText(data.replace(",", ",\n"));
 
     // Switch to transactions view
     ui->stackedWidget->setCurrentIndex(3);
@@ -200,3 +204,98 @@ void MainWindow::on_pushButtonLogOutOK_clicked()
     ui->stackedWidget->setCurrentIndex(0);
     ui->lineEditPinCode->clear();
 }
+
+std::string jjj = "http://144.21.42.71:3000/withdraw/";
+void MainWindow::on_pushButtonL1_clicked() {
+    if (ui->stackedWidget->currentIndex() == 2) {
+        const char *url = (jjj + "20" + (credit ? "/credit" : "/debit")).c_str();
+        std::string cookie = globalResult;
+        std::string sek = makeReq(url, cookie, "", false); // this is a get req
+        std::cout << "result " << sek << "\n";
+        qDebug()<<"result"<<sek;
+    }
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonL2_clicked() {
+    if (ui->stackedWidget->currentIndex() == 2) {
+    const char *url = (jjj + "40" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    }
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonL3_clicked() {
+    if (ui->stackedWidget->currentIndex() == 2) {
+    const char *url = (jjj + "60" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    }
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonL4_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR1_clicked() {
+    if (ui->stackedWidget->currentIndex() == 2) {
+    const char *url = (jjj + "90" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    }
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR2_clicked() {
+    if (ui->stackedWidget->currentIndex() == 2) {
+    const char *url = (jjj + "120" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    }
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR3_clicked() {
+    if (ui->stackedWidget->currentIndex() == 2) {
+    const char *url = (jjj + "240" + (credit ? "/credit" : "/debit")).c_str();
+    std::string cookie = globalResult;
+    std::string sek = makeReq(url, cookie, "", false); // this is a get req
+    std::cout << "result " << sek << "\n";
+    qDebug()<<"result"<<sek;
+    }
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButtonR4_clicked() {
+    ui->stackedWidget->setCurrentIndex(6);
+    ui->lineEditMuuSumma->clear();
+
+}
+
+void MainWindow::on_pushButtonMuuSummaOK_clicked()
+{
+    if (ui->stackedWidget->currentIndex() == 6) {
+        QString MuuSumma = ui->lineEditMuuSumma->text(); // Declare MuuSumma here
+        std::string MuuSummaStdString = MuuSumma.toStdString(); // Convert MuuSumma to std::string
+        std::string url = jjj + MuuSummaStdString + (credit ? "/credit" : "/debit");
+        const char *urlCStr = url.c_str(); // Convert url to const char*
+
+        std::string cookie = globalResult;
+        std::string sek = makeReq(urlCStr, cookie, "", false); // this is a get req
+        std::cout << "result " << sek << "\n";
+        qDebug() << "result" << sek;
+    }
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
