@@ -53,15 +53,13 @@ MainWindow::MainWindow(QWidget *parent)
     });
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
     delete dll_rfid;
     delete serialPort;
 }
 
-void MainWindow::openSerialPort()
-{
+void MainWindow::openSerialPort() {
     if (!dll_rfid->serialport->isOpen()) {
         dll_rfid->openSerialPort();
         qDebug() << "Debug: Sarjaportti avattu";
@@ -80,8 +78,7 @@ void MainWindow::onCardRead(const QByteArray &data) {
     qDebug() << "Debug: lineEditCardInfo text:" << ui->lineEditPinCode->text();
 }
 
-void MainWindow::on_pushButtonQuit_clicked()
-{
+void MainWindow::on_pushButtonQuit_clicked() {
     // Sulkee sovelluksen
     qDebug() << "Debug: Lopeta-nappia painettu";
     this->close();
@@ -90,8 +87,8 @@ void MainWindow::on_pushButtonQuit_clicked()
 std::string globalResult; // Global variable to store the result
 boolean credit;
 int attempts = 0;
-
 std::string CardInfo;
+
 // Function to make HTTP request and set the result to global variable
 void MainWindow::login() {
     QString Cardnum = ui->lineEditCardInfo->text();
@@ -106,9 +103,8 @@ void MainWindow::login() {
     qDebug()<<"result"<<res;
     globalResult = res;
 }
-// 06000641FF = 1111, 06000DE344 = 4444, 06000542DC = 2222
-void MainWindow::on_pushButtonEnter_clicked()
-{
+
+void MainWindow::on_pushButtonEnter_clicked() {
     // Tarkistaa syötetyn PIN-koodin ja siirtyy seuraavaan näkymään, (stackMenu) jos oikein
     qDebug() << "Debug: Enter-nappia painettu";
     credit = ui->isCredit->checkState();
@@ -121,7 +117,7 @@ void MainWindow::on_pushButtonEnter_clicked()
     {
         attempts++ ;
         if (attempts == 3){
-            QMessageBox::warning(this, tr("Title"), tr("Virheellinen PIN-koodi, tili lukittu tai jtn."));
+            QMessageBox::warning(this, tr("Title"), tr("Virheellinen PIN-koodi, tili lukittu."));
         }
         else{
             QMessageBox::warning(static_cast<QWidget*>(this), tr("Title"), tr("Pin-koodi väärin, yritä uudelleen."));
@@ -133,21 +129,14 @@ void MainWindow::on_pushButtonEnter_clicked()
     logoutTimer->start(60000);
 }
 
-
-
-// TODO: 20,40,50,100 ja x-summa nostot (mitä noston jälkeen?)
-void MainWindow::on_pushButtonWithdraw_clicked()
-{
+void MainWindow::on_pushButtonWithdraw_clicked() {
     qDebug() << "Debug: Nosta rahaa-nappia painettu";
     ui->stackedWidget->setCurrentIndex(2);
 }
 
-
-void MainWindow::on_pushButtonShowBalance_clicked()
-{
+void MainWindow::on_pushButtonShowBalance_clicked() {
     qDebug() << "Debug: Näytä saldo-nappia painettu";
     ui->stackedWidget->setCurrentIndex(4);
-
 
     std::string kkk = "http://144.21.42.71:3000/balance/"+CardInfo;
     const char* jjj = kkk.c_str();
@@ -160,20 +149,13 @@ void MainWindow::on_pushButtonShowBalance_clicked()
 
 }
 
-
-void MainWindow::on_pushButtonShowTransactions_clicked()
-{
+void MainWindow::on_pushButtonShowTransactions_clicked() {
     // Open serial port if not already opened
     openSerialPort();
-
-
     QScrollBar *scrollbar = new QScrollBar();
-
-    // QTextEdit textedit;
-
     ui->textEdit->setVerticalScrollBar(scrollbar);
+  
     std::string kkk = "http://144.21.42.71:3000/transactions/"+CardInfo;
-    // Make GET request to fetch transactions
     const char* transactionsUrl = kkk.c_str();
     std::string cookie = globalResult;
     std::string transactionData = makeReq(transactionsUrl, cookie, "", false);
@@ -181,15 +163,11 @@ void MainWindow::on_pushButtonShowTransactions_clicked()
     qDebug() << "Transaction Data: " << data;
     ui->textEdit->setText(data.replace(",", ",\n"));
 
-    // Switch to transactions view
     ui->stackedWidget->setCurrentIndex(3);
 }
 
-void MainWindow::on_pushButtonLogOut_clicked()
-{
+void MainWindow::on_pushButtonLogOut_clicked() {
     ui->stackedWidget->setCurrentIndex(5);
-    // TODO: joku uusi stackLogOut ja ajastus->siirtyy takaisin stackLogin
-    // Kirjaa käyttäjän ulos
     qDebug() << "Debug: Kirjaudu ulos-nappia painettu";
 
     const char* jjj = "http://144.21.42.71:3000/logout";
@@ -199,13 +177,13 @@ void MainWindow::on_pushButtonLogOut_clicked()
     qDebug()<<"result"<<sek;
 }
 
-void MainWindow::on_pushButtonLogOutOK_clicked()
-{
+void MainWindow::on_pushButtonLogOutOK_clicked() {
     ui->stackedWidget->setCurrentIndex(0);
     ui->lineEditPinCode->clear();
 }
 
 std::string jjj = "http://144.21.42.71:3000/withdraw/";
+
 void MainWindow::on_pushButtonL1_clicked() {
     if (ui->stackedWidget->currentIndex() == 2) {
         const char *url = (jjj + "20" + (credit ? "/credit" : "/debit")).c_str();
@@ -239,8 +217,7 @@ void MainWindow::on_pushButtonL3_clicked() {
     ui->stackedWidget->setCurrentIndex(1);
 }
 
-void MainWindow::on_pushButtonL4_clicked()
-{
+void MainWindow::on_pushButtonL4_clicked() {
     ui->stackedWidget->setCurrentIndex(1);
 }
 
@@ -280,16 +257,14 @@ void MainWindow::on_pushButtonR3_clicked() {
 void MainWindow::on_pushButtonR4_clicked() {
     ui->stackedWidget->setCurrentIndex(6);
     ui->lineEditMuuSumma->clear();
-
 }
 
-void MainWindow::on_pushButtonMuuSummaOK_clicked()
-{
+void MainWindow::on_pushButtonMuuSummaOK_clicked() {
     if (ui->stackedWidget->currentIndex() == 6) {
-        QString MuuSumma = ui->lineEditMuuSumma->text(); // Declare MuuSumma here
-        std::string MuuSummaStdString = MuuSumma.toStdString(); // Convert MuuSumma to std::string
+        QString MuuSumma = ui->lineEditMuuSumma->text(); 
+        std::string MuuSummaStdString = MuuSumma.toStdString();
         std::string url = jjj + MuuSummaStdString + (credit ? "/credit" : "/debit");
-        const char *urlCStr = url.c_str(); // Convert url to const char*
+        const char *urlCStr = url.c_str();
 
         std::string cookie = globalResult;
         std::string sek = makeReq(urlCStr, cookie, "", false); // this is a get req
@@ -298,4 +273,3 @@ void MainWindow::on_pushButtonMuuSummaOK_clicked()
     }
     ui->stackedWidget->setCurrentIndex(1);
 }
-
