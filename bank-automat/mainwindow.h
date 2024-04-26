@@ -38,6 +38,7 @@ private:
     QTimer *logoutTimer;
 
 private slots:
+    void login();
     void on_pushButtonQuit_clicked();
     void on_pushButtonEnter_clicked();
     void on_pushButtonWithdraw_clicked();
@@ -48,11 +49,12 @@ private slots:
     void on_pushButtonL1_clicked();
     void on_pushButtonL2_clicked();
     void on_pushButtonL3_clicked();
-    //void on_pushButtonL4_clicked();
+    void on_pushButtonL4_clicked();
     void on_pushButtonR1_clicked();
     void on_pushButtonR2_clicked();
     void on_pushButtonR3_clicked();
     void on_pushButtonR4_clicked();
+    void on_pushButtonMuuSummaOK_clicked();
 };
 
 #endif // MAINWINDOW_H
