@@ -26,15 +26,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(dll_rfid, &DLL_rfid::cardRead, this, &MainWindow::onCardRead);
 
-    // Asetetaan alkuindeksi pin-koodin syöttämiseen
+    // Set the initial index for entering the PIN code
     ui->stackedWidget->setCurrentIndex(0);
 
-    // Luodaan RFID-kirjaston ja sarjaportin olio
-    openSerialPort(); // Avaa sarjaportti
+    openSerialPort(); // Open the serial port
 
-    // PinCode->lineEditPinCode salasanana
+    // Set the lineEditPinCode to display password characters
     ui->lineEditPinCode->setEchoMode(QLineEdit::Password);
-    // Yhdistää numPadin painallukset lineEditPinCode
+    // Connect number pad button clicks to lineEditPinCode and lineEditMuuSumma
     for (int i = 0; i <= 9; ++i) {
         QString buttonName = QString("N") + QString::number(i);
         QObject::connect(findChild<QPushButton*>(buttonName), &QPushButton::clicked, [this, i]() {
@@ -47,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->lineEditPinCode->clear();
     });
     logoutTimer=new QTimer(this);
+    // Set up logout functionality
     connect(logoutTimer, &QTimer::timeout, this, [this]() {
         ui->stackedWidget->setCurrentIndex(5);
         ui->lineEditPinCode->clear();
@@ -57,8 +57,10 @@ MainWindow::~MainWindow() {
     delete ui;
     delete dll_rfid;
     delete serialPort;
+    delete logoutTimer;
 }
 
+// Function to open the serial port for RFID
 void MainWindow::openSerialPort() {
     if (!dll_rfid->serialport->isOpen()) {
         dll_rfid->openSerialPort();
@@ -68,23 +70,26 @@ void MainWindow::openSerialPort() {
     }
 }
 
+// Slot function to handle RFID card reading
 void MainWindow::onCardRead(const QByteArray &data) {
     QString cleanedData = QString::fromUtf8(data).trimmed();
     qDebug() << "Debug: Received data (hex):" << data.toHex();
     qDebug() << "Debug: Received data (string):" << cleanedData;
     ui->lineEditCardInfo->setText(cleanedData);
 
-    // Lisätään tarkastus, onko lineEditCardInfo:n teksti asetettu oikein
+    // Check if lineEditCardInfo text is set correctly
     qDebug() << "Debug: lineEditCardInfo text:" << ui->lineEditPinCode->text();
 }
 
+// Slot function for pushButtonQuit click
 void MainWindow::on_pushButtonQuit_clicked() {
-    // Sulkee sovelluksen
+    // Close the application
     qDebug() << "Debug: Lopeta-nappia painettu";
     this->close();
 }
 
-std::string globalResult; // Global variable to store the result
+// Global variables and login function
+std::string globalResult;
 boolean credit;
 int attempts = 0;
 std::string CardInfo;
@@ -104,10 +109,22 @@ void MainWindow::login() {
     globalResult = res;
 }
 
+// Slot function for pushbuttonEnter click
 void MainWindow::on_pushButtonEnter_clicked() {
-    // Tarkistaa syötetyn PIN-koodin ja siirtyy seuraavaan näkymään, (stackMenu) jos oikein
     qDebug() << "Debug: Enter-nappia painettu";
+
+    // Check if the "Credit" checkbox is checked
     credit = ui->isCredit->checkState();
+    QString pinCode = ui->lineEditPinCode->text();
+    QString expectedPinCode = QString::fromStdString(globalResult);
+
+    // Check if PIN code is empty
+    if (pinCode.isEmpty()) {
+        QMessageBox::warning(this, tr("Virhe"), tr("Syötä PIN-koodi."));
+        return;
+    }
+
+    // If login is successful, navigate to main menu
     if (globalResult != "Bad login")
     {
         login();
@@ -126,7 +143,7 @@ void MainWindow::on_pushButtonEnter_clicked() {
 
         ui->lineEditPinCode->clear();
     }
-    logoutTimer->start(60000);
+    logoutTimer->start(60000); // Start logout timer
 }
 
 void MainWindow::on_pushButtonWithdraw_clicked() {
@@ -145,7 +162,7 @@ void MainWindow::on_pushButtonShowBalance_clicked() {
     std::cout << "result " << sek << "\n";
     qDebug()<<"result"<<sek;
 
-    ui->labelBalance->setText(QString::fromStdString(sek)); // Display the balance
+    ui->labelBalance->setText(QString::fromStdString(sek) + " €"); // Display the balance
 
 }
 
@@ -154,14 +171,14 @@ void MainWindow::on_pushButtonShowTransactions_clicked() {
     openSerialPort();
     QScrollBar *scrollbar = new QScrollBar();
     ui->textEdit->setVerticalScrollBar(scrollbar);
-  
+
     std::string kkk = "http://144.21.42.71:3000/transactions/"+CardInfo;
     const char* transactionsUrl = kkk.c_str();
     std::string cookie = globalResult;
     std::string transactionData = makeReq(transactionsUrl, cookie, "", false);
     QString data = transactionData.c_str();
     qDebug() << "Transaction Data: " << data;
-    ui->textEdit->setText(data.replace(",", ",\n"));
+    ui->textEdit->setText(data.replace(",", ",\n").replace("{", "\n").replace("}", "\n").replace("["," ").replace(","," ").replace('"',"").replace("]",""));
 
     ui->stackedWidget->setCurrentIndex(3);
 }

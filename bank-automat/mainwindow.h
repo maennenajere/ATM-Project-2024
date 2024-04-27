@@ -8,7 +8,7 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include "dll_rfid.h"
-#include "../DLL_reqs/reqs.hpp"
+#include "../DLL_reqs_old/reqs.hpp"
 #include <QTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
