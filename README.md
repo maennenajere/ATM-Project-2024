@@ -1,11 +1,11 @@
 # SPO_Group10
 
 ## ER-kaavio
-![Er-kaavio](https://github.com/tvt23-pankkiprojekti/SPO_Group10/blob/main/ER-Kaavio.png)
+![Er-kaavio](https://github.com/maennenajere/ATM-Project-2024/blob/main/ER-Kaavio.png)
 
 ## Tekijät 
 
-- Jere Mäennenä
-- Martti Prittinen
-- Santeri Pasula
-- Veeti Punnonen
+- [Jere Mäennenä](https://github.com/maennenajere)
+- [Martti Prittinen](https://github.com/MarttiPrittinen)
+- [Santeri Pasula](https://github.com/santeripas)
+- [Veeti Punnonen](https://github.com/SheIITear)
